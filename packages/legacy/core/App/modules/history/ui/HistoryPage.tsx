@@ -152,7 +152,8 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ navigation }) => {
               accessibilityLabel={actionButtonLabel}
               buttonType={ButtonType.Secondary}
               onPress={async () => {
-                console.log('save history')
+                //TODO: Save settings
+                // console.log('save history')
               }}
             >
               {!continueEnabled && isLoading ? <ButtonLoading /> : null}

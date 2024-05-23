@@ -1,15 +1,11 @@
-import {
-  GenericRecord,
-  GenericRecordTags,
-} from '@aries-framework/core/build/modules/generic-records/repository/GenericRecord'
-import { useAgent } from '@aries-framework/react-hooks'
+import { GenericRecord, GenericRecordTags } from '@credo-ts/core/build/modules/generic-records/repository/GenericRecord'
+import { useAgent } from '@credo-ts/react-hooks'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import moment from 'moment'
 import React, { createContext, useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useCommons } from '../../../contexts/commons'
-import { LogLevel } from '../../../services/logger'
+import { TOKENS, useContainer } from '../../../container-api'
 import QueeManager from '../services/quee.service'
 import {
   AppNotificationRecord,
@@ -20,6 +16,7 @@ import {
   RecordType,
 } from '../types'
 import { BlockSelection } from '../ui/components/SingleSelectBlock'
+
 
 export enum HistorySettingsOptionStorageKey {
   HistorySettingsOption = 'historySettingsOption',
@@ -39,7 +36,7 @@ export const HistoryContext = createContext<IHistoryContext>(null as unknown as 
 
 export const HistoryProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { agent } = useAgent()
-  const { log } = useCommons()
+  const logger = useContainer().resolve(TOKENS.UTIL_LOGGER)
   const { t } = useTranslation()
 
   //Constants
@@ -108,12 +105,12 @@ export const HistoryProvider: React.FC<React.PropsWithChildren> = ({ children })
   async function findGenericRecordById(id: string): Promise<GenericRecord | null> {
     try {
       if (!agent) {
-        log(`[${HistoryProvider.name}]: Find generic record by id: Agent not set`, LogLevel.error)
+        logger.error(`[${HistoryProvider.name}]: Find generic record by id: Agent not set`)
         throw new Error(`Agent not set `)
       }
       return await agent.genericRecords.findById(id)
     } catch (e: unknown) {
-      log(`[${HistoryProvider.name}]: Find generic record by id: ${e}`, LogLevel.error)
+      logger.error(`[${HistoryProvider.name}]: Find generic record by id: ${e}`)
       throw new Error(`${e}`)
     }
   }
@@ -121,12 +118,12 @@ export const HistoryProvider: React.FC<React.PropsWithChildren> = ({ children })
   async function removeGenericRecord(genericRecord: GenericRecord): Promise<void> {
     try {
       if (!agent) {
-        log(`[${HistoryProvider.name}]: Remove generic record: Agent not set`, LogLevel.error)
+        logger.error(`[${HistoryProvider.name}]: Remove generic record: Agent not set`)
         throw new Error(`Agent not set `)
       }
       return await agent.genericRecords.delete(genericRecord)
     } catch (e: unknown) {
-      log(`[${HistoryProvider.name}]: Remove generic record: ${e}`, LogLevel.error)
+      logger.error(`[${HistoryProvider.name}]: Remove generic record: ${e}`)
       throw new Error(`${e}`)
     }
   }
@@ -135,10 +132,7 @@ export const HistoryProvider: React.FC<React.PropsWithChildren> = ({ children })
   async function addGenericRecord(customRecord: CustomRecord, type: RecordType): Promise<void> {
     try {
       if (!agent) {
-        log(
-          `[${HistoryProvider.name}]: Add generic record: Agent not set yet adding generic record into quee`,
-          LogLevel.trace
-        )
+        logger.error(`[${HistoryProvider.name}]: Add generic record: Agent not set yet adding generic record into quee`)
         QueeManager.getInstance()?.addQuee({ customRecord, type })
         return
       }
@@ -146,24 +140,24 @@ export const HistoryProvider: React.FC<React.PropsWithChildren> = ({ children })
         type: type,
       }
       const storedContent = customRecord.content as unknown as Record<string, unknown>
-      log(`[${HistoryProvider.name}]: Adding history record:${JSON.stringify(storedContent)}`, LogLevel.trace)
-      log(`[${HistoryProvider.name}]: >> Tags:${JSON.stringify(tags)}`, LogLevel.trace)
+      logger.trace(`[${HistoryProvider.name}]: Adding history record:${JSON.stringify(storedContent)}`)
+      logger.trace(`[${HistoryProvider.name}]: >> Tags:${JSON.stringify(tags)}`)
       await agent.genericRecords.save({
         content: storedContent,
         tags: tags,
       })
     } catch (e: unknown) {
-      log(`[${HistoryProvider.name}]: Add generic record: ${e}`, LogLevel.error)
+      logger.error(`[${HistoryProvider.name}]: Add generic record: ${e}`)
       throw new Error(`${e}`)
     }
   }
   async function getGenericRecordsbyQuery(query: Partial<GenericRecordTags>): Promise<CustomRecord[]> {
     try {
       if (!agent) {
-        log(`[${HistoryProvider.name}]: Find generic record by query: Agent not set`, LogLevel.error)
+        logger.error(`[${HistoryProvider.name}]: Find generic record by query: Agent not set`)
         throw new Error(`Agent not set `)
       }
-      log(`[${HistoryProvider.name}]: Searching saved history by query:${JSON.stringify(query)}`, LogLevel.trace)
+      logger.trace(`[${HistoryProvider.name}]: Searching saved history by query:${JSON.stringify(query)}`)
 
       const retrievedRecords: CustomRecord[] = []
 
@@ -214,30 +208,30 @@ export const HistoryProvider: React.FC<React.PropsWithChildren> = ({ children })
           }
         })
       }
-      log(`[${HistoryProvider.name}]: Found saved history length:${retrievedRecords.length}`, LogLevel.trace)
+      logger.trace(`[${HistoryProvider.name}]: Found saved history length:${retrievedRecords.length}`)
       return retrievedRecords
     } catch (e: unknown) {
-      log(`[${HistoryProvider.name}]: Find generic record by query: ${e}`, LogLevel.error)
+      logger.error(`[${HistoryProvider.name}]: Find generic record by query: ${e}`)
       throw new Error(`${e}`)
     }
   }
 
   async function checkQuee() {
     if (!agent) {
-      log(`[${HistoryProvider.name}]: Check quee: Agent not set`, LogLevel.error)
+      logger.error(`[${HistoryProvider.name}]: Check quee: Agent not set`)
       throw new Error(`Agent not set: cannot check quee`)
     }
     try {
       const queedItem = QueeManager.getInstance()?.getLast()
       if (queedItem) {
-        log(`[${HistoryProvider.name}]: Check quee: A quee items found - ` + JSON.stringify(queedItem), LogLevel.trace)
+        logger.trace(`[${HistoryProvider.name}]: Check quee: A quee items found - ` + JSON.stringify(queedItem))
         await addGenericRecord(queedItem.customRecord, queedItem.type)
         checkQuee()
       } else {
-        log(`[${HistoryProvider.name}]: Check quee: No quee items found`, LogLevel.trace)
+        logger.trace(`[${HistoryProvider.name}]: Check quee: No quee items found`)
       }
     } catch (err) {
-      log(`[${HistoryProvider.name}]: Check quee: ${err}`, LogLevel.error)
+      logger.error(`[${HistoryProvider.name}]: Check quee: ${err}`)
     }
   }
 

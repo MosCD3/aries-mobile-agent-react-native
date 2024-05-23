@@ -1,5 +1,5 @@
-import { ConnectionRecord, CredentialExchangeRecord, ProofExchangeRecord } from '@aries-framework/core'
-import { useConnectionById, useCredentialById, useProofById } from '@aries-framework/react-hooks'
+import { ConnectionRecord, CredentialExchangeRecord, ProofExchangeRecord } from '@credo-ts/core'
+import { useConnectionById, useCredentialById, useProofById } from '@credo-ts/react-hooks'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'

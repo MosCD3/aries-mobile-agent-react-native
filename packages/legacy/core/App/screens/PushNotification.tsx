@@ -1,4 +1,4 @@
-import { useAgent } from '@aries-framework/react-hooks'
+import { useAgent } from '@credo-ts/react-hooks'
 import { CommonActions, ParamListBase, useNavigation } from '@react-navigation/core'
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack'
 import React, { useMemo, useState } from 'react'
@@ -74,13 +74,24 @@ const PushNotification: React.FC<StackScreenProps<ParamListBase, Screens.UsePush
   const activatePushNotifications = async () => {
     const state = await enablePushNotifications.setup()
     dispatch({ type: DispatchAction.USE_PUSH_NOTIFICATIONS, payload: [state === 'granted'] })
-    if (store.preferences.enableWalletNaming) {
+    if (store.onboarding.postAuthScreens.length) {
+      const screens: string[] = store.onboarding.postAuthScreens
+      screens.shift()
+      dispatch({ type: DispatchAction.SET_POST_AUTH_SCREENS, payload: [screens] })
+      if (screens.length) {
+        navigation.navigate(screens[0] as never)
+      } else {
+        navigation.navigate(Screens.Splash as never)
+      }
+    } else if (store.preferences.enableWalletNaming) {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
           routes: [{ name: Screens.NameWallet }],
         })
       )
+    } else {
+      dispatch({ type: DispatchAction.DID_COMPLETE_ONBOARDING, payload: [true] })
     }
   }
 

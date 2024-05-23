@@ -1,4 +1,4 @@
-import { CredentialExchangeRecord } from '@aries-framework/core'
+import { CredentialExchangeRecord } from '@credo-ts/core'
 import mockRNCNetInfo from '@react-native-community/netinfo/jest/netinfo-mock'
 import '@testing-library/jest-native/extend-expect'
 import { fireEvent, render } from '@testing-library/react-native'
@@ -11,6 +11,7 @@ import { ConfigurationContext } from '../../App/contexts/configuration'
 import { testIdWithKey } from '../../App/utils/testable'
 import configurationContext from '../contexts/configuration'
 
+jest.mock('../../App/container-api')
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter')
 jest.mock('@react-native-community/netinfo', () => mockRNCNetInfo)
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper')

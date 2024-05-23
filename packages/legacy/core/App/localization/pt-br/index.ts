@@ -136,6 +136,8 @@ const translation = {
     "Message1044": "Ocorreu um problema ao incializar o onboarding.",
     "Title1045": "Não foi possível inicializar o agente.",
     "Message1045": "Ocorreu um erro ao inicializar o agente.",
+    "Title1046": "Unable to fetch contacts. (PT-BR)",
+    "Message1046": "There was a problem while fetching contacts. (PT-BR)",
   },
   "SelectionAxs": {
     "RadioChecked": "verificada.",
@@ -571,6 +573,8 @@ const translation = {
     "ProofAccepted": "Prova Aceita",
     "ProofRejected": "Prova Rejeitada",
     "RequestedCredentialsCouldNotBeFound": "Crecenciais requisitadas puderam ser encontradas",
+    "PresentationMetadataNotFound": "Não foi possível encontrar os metadados da apresentação",
+    "CredentialMetadataNotFound": "Não foi possível encontrar metadados de credenciais",
     "NewProofRequest": "Nova Prova de Credencial",
     "NotAvailableInYourWallet": "Não disponível em sua carteira",
     "PredicateNotSatisfied": "Requisito não atendido",

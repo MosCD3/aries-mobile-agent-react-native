@@ -1,4 +1,4 @@
-import { CredentialExchangeRecord } from '@aries-framework/core'
+import { CredentialExchangeRecord } from '@credo-ts/core'
 import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { Attribute, CredentialOverlay, Predicate } from '@hyperledger/aries-oca/build/legacy'
 import { useNavigation } from '@react-navigation/core'
@@ -6,10 +6,11 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import startCase from 'lodash.startcase'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useWindowDimensions, FlatList, Image, ImageBackground, StyleSheet, Text, View, ViewStyle } from 'react-native'
+import { FlatList, Image, ImageBackground, StyleSheet, Text, View, ViewStyle, useWindowDimensions } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
+import { TOKENS, useContainer } from '../../container-api'
 import { useConfiguration } from '../../contexts/configuration'
 import { useTheme } from '../../contexts/theme'
 import { GenericFn } from '../../types/fn'
@@ -94,7 +95,6 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
   const [dimensions, setDimensions] = useState({ cardWidth: 0, cardHeight: 0 })
   const { i18n, t } = useTranslation()
   const { ColorPallet, TextTheme, ListItems } = useTheme()
-  const { OCABundleResolver, getCredentialHelpDictionary } = useConfiguration()
   const [isRevoked, setIsRevoked] = useState<boolean>(credential?.revocationNotification !== undefined)
   const [flaggedAttributes, setFlaggedAttributes] = useState<string[]>()
   const [allPI, setAllPI] = useState<boolean>()
@@ -102,6 +102,8 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
   const [isProofRevoked, setIsProofRevoked] = useState<boolean>(
     credential?.revocationNotification !== undefined && !!proof
   )
+  const { getCredentialHelpDictionary } = useConfiguration()
+  const bundleResolver = useContainer().resolve(TOKENS.UTIL_OCA_RESOLVER)
   const [helpAction, setHelpAction] = useState<GenericFn>()
   const [overlay, setOverlay] = useState<CredentialOverlay<BrandingOverlay>>({})
   // below navigation only to be used from proof request screen
@@ -225,16 +227,19 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
     },
   })
 
-  const colorIfErrorState = () =>
-    error || predicateError || isProofRevoked
-      ? ColorPallet.notification.errorBorder
-      : styles.secondaryBodyContainer.backgroundColor
+  const backgroundColorIfErrorState = (backgroundColor?: string) =>
+    error || predicateError || isProofRevoked ? ColorPallet.notification.errorBorder : backgroundColor
 
   const fontColorWithHighContrast = () => {
-    const c = colorIfErrorState() ?? ColorPallet.grayscale.lightGrey
+    if (proof) {
+      return ColorPallet.grayscale.mediumGrey
+    }
+
+    const c =
+      backgroundColorIfErrorState(overlay.brandingOverlay?.primaryBackgroundColor) ?? ColorPallet.grayscale.lightGrey
     const shade = shadeIsLightOrDark(c)
 
-    return shade == Shade.Light ? ColorPallet.grayscale.darkGrey : ColorPallet.grayscale.mediumGrey
+    return shade == Shade.Light ? ColorPallet.grayscale.darkGrey : ColorPallet.grayscale.lightGrey
   }
 
   const parseAttribute = (item: (Attribute & Predicate) | undefined) => {
@@ -279,7 +284,7 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
       },
       language: i18n.language,
     }
-    OCABundleResolver.resolveAllBundles(params).then((bundle) => {
+    bundleResolver.resolveAllBundles(params).then((bundle) => {
       if (proof) {
         setFlaggedAttributes((bundle as any).bundle.bundle.flaggedAttributes.map((attr: any) => attr.name))
       }
@@ -522,19 +527,11 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
         style={[
           styles.secondaryBodyContainer,
           {
-            backgroundColor: colorIfErrorState(),
+            backgroundColor: backgroundColorIfErrorState(styles.secondaryBodyContainer.backgroundColor),
             overflow: 'hidden',
           },
         ]}
       >
-        {overlay.metaOverlay?.watermark && (
-          <CardWatermark
-            width={dimensions.cardWidth}
-            height={dimensions.cardHeight}
-            style={{ color: fontColorWithHighContrast() }}
-            watermark={overlay.metaOverlay?.watermark}
-          />
-        )}
         {overlay.brandingOverlay?.backgroundImageSlice && !displayItems ? (
           <ImageBackground
             source={toImageSource(overlay.brandingOverlay?.backgroundImageSlice)}

@@ -1,9 +1,12 @@
+import { DefaultOCABundleResolver } from '@hyperledger/aries-oca/build/legacy'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { createContext, useContext } from 'react'
 import { DependencyContainer } from 'tsyringe'
 
+import * as bundle from './assets/oca-bundles.json'
 import Button from './components/buttons/Button'
+import defaultIndyLedgers from './configs/ledgers/indy'
 import { LocalStorageKeys } from './constants'
 import { TOKENS, Container, TokenMapping } from './container-api'
 import { DispatchAction, ReducerAction } from './contexts/reducers/store'
@@ -15,6 +18,7 @@ import Onboarding from './screens/Onboarding'
 import Preface from './screens/Preface'
 import ScreenTerms, { TermsVersion } from './screens/Terms'
 import { loadLoginAttempt } from './services/keychain'
+import { ConsoleLogger } from './services/logger'
 import { AuthenticateStackParams, Screens } from './types/navigators'
 import {
   Migration as MigrationState,
@@ -39,8 +43,11 @@ export class MainContainer implements Container {
     this.container.registerInstance(TOKENS.SCREEN_ONBOARDING, Onboarding)
     this.container.registerInstance(TOKENS.STACK_ONBOARDING, OnboardingStack)
     this.container.registerInstance(TOKENS.COMP_BUTTON, Button)
+    this.container.registerInstance(TOKENS.GROUP_BY_REFERENT, false)
     this.container.registerInstance(TOKENS.OBJECT_ONBOARDINGCONFIG, DefaultScreenOptionsDictionary)
-
+    this.container.registerInstance(TOKENS.UTIL_LOGGER, new ConsoleLogger())
+    this.container.registerInstance(TOKENS.UTIL_OCA_RESOLVER, new DefaultOCABundleResolver(bundle))
+    this.container.registerInstance(TOKENS.UTIL_LEDGERS, defaultIndyLedgers)
     this.container.registerInstance(
       TOKENS.FN_ONBOARDING_DONE,
       (dispatch: React.Dispatch<ReducerAction<unknown>>, navigation: StackNavigationProp<AuthenticateStackParams>) => {
@@ -83,11 +90,11 @@ export class MainContainer implements Container {
 
       const state: State = {
         ...defaultState,
-        loginAttempt: loginAttempt,
-        preferences: preferences,
-        migration: migration,
-        tours: tours,
-        onboarding: onboarding,
+        loginAttempt: { ...defaultState.loginAttempt, ...loginAttempt },
+        preferences: { ...defaultState.preferences, ...preferences },
+        migration: { ...defaultState.migration, ...migration },
+        tours: { ...defaultState.tours, ...tours },
+        onboarding: { ...defaultState.onboarding, ...onboarding },
       }
       dispatch({ type: DispatchAction.STATE_DISPATCH, payload: [state] })
     })

@@ -1,9 +1,7 @@
-import { Agent } from '@aries-framework/core'
-import { IndyVdrPoolConfig } from '@aries-framework/indy-vdr'
+import { Agent } from '@credo-ts/core'
 import { ProofRequestTemplate } from '@hyperledger/aries-bifold-verifier'
-import { OCABundleResolverType } from '@hyperledger/aries-oca/build/legacy'
 import { StackNavigationOptions, StackScreenProps } from '@react-navigation/stack'
-import { createContext, ReducerAction, useContext } from 'react'
+import { ReducerAction, createContext, useContext } from 'react'
 
 import { EmptyListProps } from '../components/misc/EmptyList'
 import { RecordProps } from '../components/record/Record'
@@ -43,12 +41,10 @@ export interface ConfigurationContext {
   credentialListOptions: React.FC
   credentialEmptyList: React.FC<EmptyListProps>
   developer: React.FC
-  OCABundleResolver: OCABundleResolverType
   proofTemplateBaseUrl?: string
   scan: React.FC<StackScreenProps<ConnectStackParams>>
   record: React.FC<RecordProps>
   PINSecurity: PINSecurityParams
-  indyLedgers: IndyVdrPoolConfig[]
   settings: SettingSection[]
   customNotification: NotificationConfiguration
   supportedLanguages: Locales[]

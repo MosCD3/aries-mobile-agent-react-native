@@ -137,6 +137,8 @@ const translation = {
     "Message1044": "There was a problem while initializing onboarding.",
     "Title1045": "Unable to initialize agent.",
     "Message1045": "There was a problem while initializing agent.",
+    "Title1046": "Unable to fetch contacts.",
+    "Message1046": "There was a problem while fetching contacts.",
   },
   "SelectionAxs": {
     "RadioChecked": "checked",
@@ -590,6 +592,8 @@ const translation = {
     "ProofAccepted": "Proof Accepted",
     "ProofRejected": "Proof Rejected",
     "RequestedCredentialsCouldNotBeFound": "Requested credentials could not be found",
+    "PresentationMetadataNotFound": "Could not find presentation metadata",
+    "CredentialMetadataNotFound": "Could not find credential metadata",
     "NewProofRequest": "New Proof Request",
     "NotAvailableInYourWallet": "Not in your wallet",
     "PredicateNotSatisfied": "Requirement not met",
