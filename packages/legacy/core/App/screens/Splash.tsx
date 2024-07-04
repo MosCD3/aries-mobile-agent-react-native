@@ -214,6 +214,8 @@ const Splash: React.FC = () => {
           // Cannot find wallet id/secret
           return
         }
+        const mediator = "https://ws.stage.mediator.diti.di.gov.on.ca/?c_i=eyJAdHlwZSI6ICJodHRwczovL2RpZGNvbW0ub3JnL2Nvbm5lY3Rpb25zLzEuMC9pbnZpdGF0aW9uIiwgIkBpZCI6ICI0OTQyOTE1ZC0zOTYzLTRjNjUtYTBmYi1kMWQxNDBkMTA5ZjciLCAicmVjaXBpZW50S2V5cyI6IFsiQVMyZ1lqUHZHNE10SnBTbXJVQUE3TXU1MmNnb0ZTUkZETEdkZ3ZQODhjZmsiXSwgInNlcnZpY2VFbmRwb2ludCI6ICJodHRwczovL3dzLnN0YWdlLm1lZGlhdG9yLmRpdGkuZGkuZ292Lm9uLmNhIiwgImxhYmVsIjogIk9EU19NRURJQVRPUiJ9"
+        console.log("$$: using mediator URL", mediator)
 
         const newAgent = new Agent({
           config: {
@@ -228,7 +230,7 @@ const Splash: React.FC = () => {
           dependencies: agentDependencies,
           modules: getAgentModules({
             indyNetworks: indyLedgers,
-            mediatorInvitationUrl: Config.MEDIATOR_URL,
+            mediatorInvitationUrl: mediator,
           }),
         })
         const wsTransport = new WsOutboundTransport()

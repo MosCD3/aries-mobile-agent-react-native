@@ -28,7 +28,7 @@ import { CaptureBaseAttributeType } from '@hyperledger/aries-oca'
 import { Attribute, Predicate } from '@hyperledger/aries-oca/build/legacy'
 import { Buffer } from 'buffer'
 import moment from 'moment'
-import { parseUrl } from 'query-string'
+import queryString from 'query-string'
 import { ReactNode } from 'react'
 import { TFunction } from 'react-i18next'
 import { DeviceEventEmitter } from 'react-native'
@@ -48,6 +48,8 @@ import {
   getDescriptorMetadata,
 } from './anonCredsProofRequestMapper'
 import { parseCredDefFromId } from './cred-def'
+import { parseInvitationUrl } from './parsers'
+import { receiveCredentialFromOpenId4VciOffer } from './openid4vc/openIdCred'
 
 export { parsedCredDefNameFromCredential } from './cred-def'
 
@@ -984,7 +986,7 @@ const queryHasBetaParam = (query: QueryParams) => {
  * @param reuseConnection a boolean to determine if connection reuse should be allowed
  * @throws different types of CredoError if unsuccessful, what type depends on the reason for failure
  */
-const primaryConnectStrategy = async (
+const didCommPrimaryConnectStrategy = async (
   uri: string,
   agent: Agent | undefined,
   navigation: any,
@@ -1008,6 +1010,71 @@ const primaryConnectStrategy = async (
 }
 
 /**
+ * Using built-in Credo methods, receive a message from a scan or deeplink and navigate accordingly
+ * @param uri a URI either containing a base64 encoded connection invite in its query parameters or a redirect URL itself
+ * @param agent an Agent instance
+ * @param navigation a navigation object from either the Scan screen, Home screen, or PasteUrl screen
+ * @param implicitInvitations a boolean to determine if implicit invitation behavior should be used
+ * @param reuseConnection a boolean to determine if connection reuse should be allowed
+ * @throws different types of CredoError if unsuccessful, what type depends on the reason for failure
+ */
+const openIdCredentialStrategy = async (uri: string, agent: Agent | undefined, navigation: any) => {
+  if (!agent) {
+    throw new Error('Agent undefined')
+    return
+  }
+  const record = await receiveCredentialFromOpenId4VciOffer({ agent: agent, uri: uri })
+  console.log("$$: OPENID-Cred:", JSON.stringify(record))
+  // if (receivedInvitation?.connectionRecord?.id) {
+  //   // connection-based
+  //   navigation.navigate(Stacks.ConnectionStack as any, {
+  //     screen: Screens.Connection,
+  //     params: { connectionId: receivedInvitation.connectionRecord.id },
+  //   })
+  // } else {
+  //   // connectionless
+  //   navigation.navigate(Stacks.ConnectionStack as any, {
+  //     screen: Screens.Connection,
+  //     params: { threadId: receivedInvitation?.outOfBandRecord.outOfBandInvitation.threadId },
+  //   })
+  // }
+}
+
+/**
+ * Parse URI and route to appropriate VC type methods
+ * @param uri a URI either containing a base64 encoded connection invite in its query parameters or a redirect URL itself
+ * @param agent an Agent instance
+ * @param navigation a navigation object from either the Scan screen, Home screen, or PasteUrl screen
+ * @param implicitInvitations a boolean to determine if implicit invitation behavior should be used
+ * @param reuseConnection a boolean to determine if connection reuse should be allowed
+ * @throws different types of error if URI not supported
+ */
+const primaryConnectStrategy = async (
+  uri: string,
+  agent: Agent | undefined,
+  navigation: any,
+  implicitInvitations: boolean = false,
+  reuseConnection: boolean = false
+) => {
+  const parseResult = await parseInvitationUrl(uri)
+  if (!parseResult.success) {
+    throw new Error(`Primary error: ${parseResult.error}`)
+  }
+  const invitationData = parseResult.result
+  if (invitationData.type === 'didcomm') {
+    await didCommPrimaryConnectStrategy(uri, agent, navigation, implicitInvitations, reuseConnection)
+    return
+  }
+
+  if (invitationData.type === 'openid-credential-offer') {
+    await openIdCredentialStrategy(uri, agent, navigation)
+    return
+  }
+
+  throw new Error(`Primary error: Invitation not recognised: ${invitationData.type}`)
+}
+
+/**
  * Custom handling of beta query params to receive a message from a scan or deeplink and navigate accordingly
  * @param uri a URI containing with base64 encoded query parameter
  * @param agent an Agent instance
@@ -1015,7 +1082,8 @@ const primaryConnectStrategy = async (
  * @param isDeepLink a boolean to communicate where the uri is coming from
  */
 const betaConnectStrategy = async (uri: string, agent: Agent, navigation: any, isDeepLink: boolean) => {
-  const queryParams = parseUrl(uri)?.query
+  const parsedUrl = queryString.parseUrl(uri)
+  const queryParams = parsedUrl?.query
 
   // only throw here if it's not a deeplink
   if (!isDeepLink && !(queryParams && queryHasBetaParam(queryParams))) {
