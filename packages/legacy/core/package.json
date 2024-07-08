@@ -44,6 +44,7 @@
     "@credo-ts/core": "0.5.3",
     "@credo-ts/indy-sdk-to-askar-migration": "0.5.3",
     "@credo-ts/indy-vdr": "0.5.3",
+    "@credo-ts/openid4vc": "0.5.3",
     "@credo-ts/push-notifications": "^0.7.0",
     "@credo-ts/question-answer": "0.5.3",
     "@credo-ts/react-hooks": "^0.6.0",
@@ -139,6 +140,7 @@
     "react-native-vector-icons": "^10.0.0",
     "react-native-vision-camera": "^3.6.16",
     "react-test-renderer": "^18.2.0",
+    "serve-static": "^1.15.0",
     "tsyringe": "^4.7.0",
     "typescript": "^5.0.4",
     "uuid": "^9.0.0"
@@ -149,6 +151,7 @@
     "@credo-ts/core": "0.5.3",
     "@credo-ts/indy-sdk-to-askar-migration": "0.5.3",
     "@credo-ts/indy-vdr": "0.5.3",
+    "@credo-ts/openid4vc": "0.5.3",
     "@credo-ts/push-notifications": "^0.7.0",
     "@credo-ts/question-answer": "0.5.3",
     "@credo-ts/react-hooks": "^0.6.0",
@@ -212,6 +215,7 @@
     "react-native-uuid": "^2.0.1",
     "react-native-vector-icons": "^10.0.0",
     "react-native-vision-camera": "*",
+    "serve-static": "^1.15.0",
     "tsyringe": "^4.7.0",
     "uuid": "^9.0.0"
   },

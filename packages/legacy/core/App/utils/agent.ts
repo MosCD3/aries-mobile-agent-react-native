@@ -24,6 +24,7 @@ import {
   DidsModule,
 } from '@credo-ts/core'
 import { IndyVdrAnonCredsRegistry, IndyVdrModule, IndyVdrPoolConfig } from '@credo-ts/indy-vdr'
+import { OpenId4VcHolderModule } from '@credo-ts/openid4vc'
 import { PushNotificationsApnsModule, PushNotificationsFcmModule } from '@credo-ts/push-notifications'
 import { useAgent } from '@credo-ts/react-hooks'
 import { anoncreds } from '@hyperledger/anoncreds-react-native'
@@ -111,6 +112,7 @@ export function getAgentModules({
     }),
     pushNotificationsFcm: new PushNotificationsFcmModule(),
     pushNotificationsApns: new PushNotificationsApnsModule(),
+    openId4VcHolder: new OpenId4VcHolderModule(),
   }
 
   if (proxyBaseUrl) {
