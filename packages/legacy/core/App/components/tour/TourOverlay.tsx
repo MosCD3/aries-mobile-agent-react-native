@@ -85,7 +85,10 @@ export const TourOverlay = (props: TourOverlayProps) => {
   }, [windowWidth, windowHeight])
 
   return currentStep !== undefined ? (
-    <View style={{ position: 'absolute', top: 0, left: 0, height: windowHeight + 1, width: windowWidth + 1 }} testID={testIdWithKey('SpotlightOverlay')}>
+    <View
+      style={{ position: 'absolute', top: 0, left: 0, height: windowHeight + 1, width: windowWidth + 1 }}
+      testID={testIdWithKey('SpotlightOverlay')}
+    >
       <Svg
         testID={testIdWithKey('SpotOverlay')}
         height={windowHeight + 1}
@@ -96,19 +99,13 @@ export const TourOverlay = (props: TourOverlayProps) => {
         renderToHardwareTextureAndroid={true}
       >
         <Defs>
-          <Mask id="mask" x={0} y={0} height={windowHeight + 1} width={windowWidth + 1}>
+          <View>
             <Rect height={windowHeight + 1} width={windowWidth + 1} fill="#fff" />
             <SpotCutout />
-          </Mask>
+          </View>
         </Defs>
 
-        <Rect
-          height={windowHeight + 1}
-          width={windowWidth + 1}
-          fill={color}
-          mask="url(#mask)"
-          opacity={backdropOpacity}
-        />
+        <Rect height={windowHeight + 1} width={windowWidth + 1} mask="url(#mask)" opacity={backdropOpacity} />
       </Svg>
 
       <View

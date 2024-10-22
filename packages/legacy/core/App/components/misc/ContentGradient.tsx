@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, StyleSheet } from 'react-native'
-import Svg, { Defs, Rect, LinearGradient, Stop } from 'react-native-svg'
+import Svg, { Defs, Rect, Stop } from 'react-native-svg'
 
 type ContentGradientProps = {
   backgroundColor: string
@@ -26,10 +26,10 @@ const ContentGradient: React.FC<ContentGradientProps> = ({ backgroundColor, heig
     <View style={styles.container}>
       <Svg height={`${height}`} width="100%" style={StyleSheet.absoluteFill}>
         <Defs>
-          <LinearGradient id={id} x1="0%" y1="0%" x2="0%" y2="100%">
+          <View>
             <Stop offset="0%" stopColor={backgroundColor} stopOpacity={0} />
             <Stop offset="100%" stopColor={backgroundColor} stopOpacity={1} />
-          </LinearGradient>
+          </View>
         </Defs>
         <Rect height={`${height}`} width="100%" fill={`url(#${id})`} />
       </Svg>

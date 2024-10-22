@@ -182,7 +182,7 @@ export async function withTrustedCertificate<T>(
   }
 }
 
-const allowUntrustedCertificates = true
+const allowUntrustedCertificates = false
 
 export const getCredentialsForProofRequest = async ({ agent, data, uri }: OpenID4VCIParam) => {
   let requestUri = uri
