@@ -1,5 +1,15 @@
 # @bifold/core
 
+## 2.1.0
+
+### Minor Changes
+
+- 211f88a: Refactor PIN Enter screen into two separate screens for verifying PIN in unlocked wallet and for unlocking wallet
+
+### Patch Changes
+
+- f50bea0: fix: UI updates for OpenID cards flow
+
 ## 2.0.1
 
 ### Patch Changes
