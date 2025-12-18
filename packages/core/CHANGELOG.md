@@ -1,5 +1,11 @@
 # @bifold/core
 
+## 2.11.9
+
+### Patch Changes
+
+- f4b8a77: Add card status icons to theme for customization purposes
+
 ## 2.11.8
 
 ### Patch Changes
