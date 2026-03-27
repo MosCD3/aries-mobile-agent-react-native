@@ -1,5 +1,13 @@
 # @bifold/core
 
+## 3.0.1
+
+### Patch Changes
+
+- 1e57f76: Fix Wallet Key
+- b4c4ded: Fix for biometrics availability not refreshing after being enabled on android
+  - @bifold/react-hooks@3.0.1
+
 ## 3.0.0
 
 ### Major Changes
