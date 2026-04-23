@@ -1,5 +1,13 @@
 # @bifold/core
 
+## 3.0.2
+
+### Patch Changes
+
+- 226ae62: Update oid4vc connection screen
+- 4ee6a41: Added Expo App Integrity functionality and initialization on app start after auth
+  - @bifold/react-hooks@3.0.2
+
 ## 3.0.1
 
 ### Patch Changes
