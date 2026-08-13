@@ -1,5 +1,12 @@
 # @bifold/core
 
+## 3.0.22
+
+### Patch Changes
+
+- f0db662: added support work for proof expiration configuration
+  - @bifold/react-hooks@3.0.22
+
 ## 3.0.21
 
 ### Patch Changes
